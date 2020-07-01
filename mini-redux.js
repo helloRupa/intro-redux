@@ -165,4 +165,4 @@ const multiStore = createStore(rootReducer);
 const addOwner = owner => ({
   type: 'ADD_OWNER',
   owner
-})
+});
