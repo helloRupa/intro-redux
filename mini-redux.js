@@ -1,30 +1,21 @@
 function createStore(reducer) {
-  let state;
-  let subscribedListener;
-  // Set the initial state by dispatching a nonsense action
-  // This causes the initialState to be used as the value of the
-  // default parameter in the reducer (some naughty hoisting going on in here!)
-  dispatch({ type: "LOVE_THEM_QUICK_MAFFS_INIT" });
+  let state = {};
 
+  // 1. return the state from the store
   function getState() {
-    return state;
+    return 'Getting the state';
   }
 
+  // 3. use dispatch to call the reducer and update the state, test that you can set the initial state
+  // 4. how can we set the initial state as soon as the store is created?
   function dispatch(action) {
-    state = reducer(state, action);
-
-    if (typeof subscribedListener === 'function') {
-      subscribedListener();
-    }
+    return 'Dispatching an action';
   }
-  // provide a callback to run any time an action is dispatched
-  // provide a way to stop running that callback when the dev decides
-  function subscribe(listener) {
-    subscribedListener = listener;
 
-    return function() {
-      subscribedListener = undefined;
-    }
+  // BONUS 1: subscribe provides the ability to run a function any time the state might have changed
+  // Once you get that working, add the ability to unsubscribe so that the function is no longer called
+  function subscribe(listener) {
+    
   }
 
   return {
@@ -34,135 +25,95 @@ function createStore(reducer) {
   }
 }
 
-const initialState = {
+const initialCatState = {
   cats: ['Meowser', 'Charlie', 'Fluffanilla'],
   selectedCat: 'Meowser',
   owner: 'Meee'
 };
 
-const catReducer = (state=initialState, action) => {
-  switch(action.type) {
-    case 'ADD_CAT': // convention is all caps w/ underscores for action type
-      return {
-        ...state,
-        cats: [...state.cats, action.cat]
-      };
-    case 'SELECT_CAT':
-      if (state.cats.includes(action.cat)) {
-        return {
-          ...state,
-          selectedCat: action.cat
-        }
-      } else {
-        return state;
-      }
-    case 'ADD_OWNER':
-      return {
-        ...state,
-        owner: action.owner
-      }
-    default:
-      return state;
-  }
-};
-
-// plain action, not flexible
-// const addCat = {
-//   type: 'ADD_CAT',
-//   cat: 'Algernon'
-// };
-
-// Let's make a more flexible/dynamic action: AN ACTION CREATOR!!
-const addCat = cat => ({
-  type: 'ADD_CAT',  // convention is all caps and underscore, start w/ verb cuz action
-  cat
-});
-
-const selectCat = cat => ({
-  type: 'SELECT_CAT',
-  cat
-});
-
-// Use this when you have multiple reducers, one per concern, like cats and dogs
-// OR books and authors OR posts and comments and users OR pineapple pizzas and edible pizzas
-// OR stuff, ya know
-function combineReducers(reducerPOJO) {
-  return function(state, action) {
-    let combinedState = {};  // a target object to populate w/ beautiful state
-    let hasChanged = false;  // track whether reduced slice is different from og slice
-
-    // iterate through the keys
-    for (const key in reducerPOJO) {
-      // if there is state at the key, use that, otherwise undefined
-      // undefined will cause the initial state associated with the specific reducer
-      // to return from the reducer (few lines down)
-      const stateSlice = state ? state[key] : undefined;
-      // call the reducer stored at the key. if multiple reducers respond to the same
-      // action, they will do so
-      const newSlice = reducerPOJO[key](stateSlice, action);
-      // combine state from multiple reducers, put that state in the associated key
-      combinedState[key] = newSlice;
-
-      if (stateSlice !== newSlice) {
-        hasChanged = true;
-      }
-    }
-    // return the old state object if nothing changed
-    return (hasChanged) ? combinedState : state;
-  };
+// 2. Using a switch statement, return the state by default, then test that this works by providing a nonsense action
+// 6. Update this to add a cat to cats in the state, i.e. make it respond to our action
+function catReducer(state=initialCatState, action) {
+  
 }
 
-const dogState = {
-  dogs: ['Chi Chi', 'Paw Paw'],
-  selectedDog: 'Chi Chi',
-  owner: 'You'
-};
+// 5. Create the addCat action to add a cat to cats in the state
+//    Can we make this flexible? So that we can add a cat with any name?
 
-const dogReducer = (state=dogState, action) => {
-  switch(action.type) {
-    case 'ADD_DOG':
-      return {
-        ...state,
-        dogs: [...state.dogs, action.dog]
-      };
-    case 'SELECT_DOG':
-      if (state.dogs.includes(action.dog)) {
-        return {
-          ...state,
-          selectedDog: action.dog
-        }
-      } else {
-        return state;
-      }
-    case 'ADD_OWNER':
-      return {
-        ...state,
-        owner: action.owner
-      }
-    default:
-      return state;
-  }
-};
+// 7. Add code to change the selectedCat in the relevant places in this file
 
-// Let's make a more flexible/dynamic action: AN ACTION CREATOR!!
-const addDog = dog => ({
-  type: 'ADD_DOG',
-  dog
-});
+const store = createStore(catReducer);
 
-const selectDog = dog => ({
-  type: 'SELECT_DOG',
-  dog
-});
+// BONUS 2: Uncomment the code below, use combineReducers() to combine the catReducer
+// and dogReducer into a rootReducer. Make a second store called mulitStore using that.
+// If you've gotten that working, when you call multiStore.getState(), the state will
+// contain cat and dog info. Next, create a new addOwner action, and make both cats and
+// dogs respond to it.
 
-const rootReducer = combineReducers({
-  cat: catReducer,
-  dog: dogReducer
-});
+/**********************************************/
+/***  DOG STUFF TO UNCOMMENT IF WE GET HERE ***/
+/**********************************************/
 
-const multiStore = createStore(rootReducer);
+// const dogState = {
+//   dogs: ['Chi Chi', 'Paw Paw'],
+//   selectedDog: 'Chi Chi',
+//   owner: 'You'
+// };
 
-const addOwner = owner => ({
-  type: 'ADD_OWNER',
-  owner
-})
+// const dogReducer = (state=dogState, action) => {
+//   switch(action.type) {
+//     case 'ADD_DOG':
+//       return {
+//         ...state,
+//         dogs: [...state.dogs, action.dog]
+//       };
+//     case 'SELECT_DOG':
+//       if (state.dogs.includes(action.dog)) {
+//         return {
+//           ...state,
+//           selectedDog: action.dog
+//         }
+//       } else {
+//         return state;
+//       }
+//     case 'ADD_OWNER':
+//       return {
+//         ...state,
+//         owner: action.owner
+//       }
+//     default:
+//       return state;
+//   }
+// };
+
+// const addDog = dog => ({
+//   type: 'ADD_DOG',
+//   dog
+// });
+
+// const selectDog = dog => ({
+//   type: 'SELECT_DOG',
+//   dog
+// });
+
+
+// function combineReducers(reducerPOJO) {
+//   return function(state, action) {
+//     let combinedState = {};
+//     let hasChanged = false; 
+
+//     for (const key in reducerPOJO) {
+//       const stateSlice = state ? state[key] : undefined;
+//       const newSlice = reducerPOJO[key](stateSlice, action);
+
+//       combinedState[key] = newSlice;
+
+//       if (stateSlice !== newSlice) {
+//         hasChanged = true;
+//       }
+//     }
+
+//     return (hasChanged) ? combinedState : state;
+//   };
+// }
+
