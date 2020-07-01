@@ -6,7 +6,7 @@ This function returns an object (POJO) that has some methods available on it. Ty
 
 - `createStore()` is a function. It stores a reference to the store's state as a POJO ({}). The state is reassignable.
 - It takes a single argument: `reducer`.
-- It returns a POJO that makes some methods available to us. The methods are `getState()` and `dispatch()`. Stub those out for now and have them return a string containing the name of the function. You'll fill them in later.
+- It returns a POJO that makes some methods available to us. We'll focus on `getState()` and `dispatch()`. Stub those out for now and have them return a string containing the name of the function. You'll fill them in later.
 
 > Test your code by creating a store, and then calling methods upon it to check that there are no errors.
 
