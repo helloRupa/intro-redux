@@ -72,7 +72,7 @@ Our state contains a key: `selectedCat`. What can we do to select a new cat? How
 # ---------- BONUS ----------
 
 ## 9. subscribe(listener)
-Add the `subscribe()` method to `createStore()`. `subscribe()` is used to run a callback any time the store's state _might_ have changed.
+Add the `subscribe()` method to `createStore()`. `subscribe()` is used to run a callback any time the store's state _might_ have changed. When we start using Redux in React, we'll use this method to force components to update. And then we'll start using react-redux and not use this method at all, because that's just how life is sometimes. But do know that it will be used under the hood, waving to us from underneath a bedsheet of code.
 
 1. This method is called on the store with a callback called `listener`. 
 2. That callback is automatically run any time an action is dispatched.
@@ -89,3 +89,38 @@ store.dispatch(selectCat('Charlie')); // should print the string
 unsubscribe();
 store.dispatch(selectCat('Charlie')); // Nothing should print
 ```
+
+## 11. Create combineReducers(reducersPOJO)
+This method allows you to have multiple reducers manage different slices of state in your app. Imagine our app wasn't just handling cats, but also dogs. What if it was also handling owners? We could have one reducer handle the dogs, cats, and owners, but it makes more sense to separate our concerns and have one reducer per concern. However, we can only provide a single reducer to `createStore()`. This is where `combineReducers()` comes in! It's included with Redux by default, but we'll make our own. The great thing about `combineReducers()` is that it doesn't change how we code any of our existing reducers (unless we want to change their names for some reason).
+
+This is what we want to be able to do:
+```
+const rootReducer = combineReducers({
+  cat: catReducer,  // initialCatState will now be stored at the key cat
+  dog: dogReducer   // initialDogState will now be stored at the key dog
+});  // returns a function that can be passed to createStore()
+
+const store = createStore(rootReducer);
+store.getState(); // returns { cat: { cats: ['Meowser',...], selectedCat: 'Meowser' }, dog: { dogs: ['Chi Chi',...], selectedDog: 'Chi Chi' } }
+store.dispatch(addCat('Meow Beans'));
+store.dispatch(addDog('Woofin\' McWoofenStooffer'));
+```
+
+1. Uncomment the `dogReducer` and its associated actions. We'll need this for testing later.
+2. Declare `combineReducers()` outside of `createStore()`. It should take one argument: `reducersPOJO`.
+3. Our function should return a function, since that's what `createStore()` needs. The returned function should take the same arguments as a regular reducer. This important because `dispatch()` is going to carry on running just like it always did.
+4. We need to track whether our state has changed when we run the reducers inside of the `reducersPOJO`. Declar a variable called `hasChanged` and set it to `false`.
+5. We also need to store each slice of state in a new object. Declare `combinedState` as an empty object.
+6. Call each reducer with its associated slice of state and the action. If the state returned by the reducer is not equal to the original slice, set `hasChanged` to `true`. Otherwise leave it alone. Store the slice of state at the relevant key in the `combinedState` object.
+7. Once all the reducers have been run, return the new state. If the state `hasChanged` return `combinedState`. If the state has NOT changed, return the original `state`.
+
+> Test to see if you can get the correct initial state with cats and dogs. Once that's working, check if you can successfully dispatch actions to update state. Also dispatch a nonsense action and check that the old state is the same as the new state.
+
+## 12. Make catReducers and dogReducers respond to the same action
+Let's see if `combineReducers()` is really working as it should. If it is, we should be able to make cats and dogs respond to the same action.
+
+1. Declare an action creator `addOwner(name)` that adds an owner to a cat or a dog.
+2. Update the initial states for the cat and dog by adding an owner key. Give it some name of your choosing.
+3. Update the reducers for cats and dogs to respond to the `'ADD_OWNER'` action. It should set the owner to the action's payload.
+
+> Test the code by dispatching the addOwner action to the store. Then check to see if it updated the owner for both cats and dogs.

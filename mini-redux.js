@@ -36,7 +36,8 @@ function createStore(reducer) {
 
 const initialState = {
   cats: ['Meowser', 'Charlie', 'Fluffanilla'],
-  selectedCat: 'Meowser'
+  selectedCat: 'Meowser',
+  owner: 'Meee'
 };
 
 const catReducer = (state=initialState, action) => {
@@ -54,6 +55,11 @@ const catReducer = (state=initialState, action) => {
         }
       } else {
         return state;
+      }
+    case 'ADD_OWNER':
+      return {
+        ...state,
+        owner: action.owner
       }
     default:
       return state;
@@ -91,11 +97,11 @@ function combineReducers(reducerPOJO) {
       // undefined will cause the initial state associated with the specific reducer
       // to return from the reducer (few lines down)
       const stateSlice = state ? state[key] : undefined;
-      const newSlice = reducerPOJO[key](stateSlice, action);
-      // combine state from multiple reducers, put that state in the associated key
       // call the reducer stored at the key. if multiple reducers respond to the same
       // action, they will do so
-      Object.assign(combinedState, { [key]: newSlice});
+      const newSlice = reducerPOJO[key](stateSlice, action);
+      // combine state from multiple reducers, put that state in the associated key
+      combinedState[key] = newSlice;
 
       if (stateSlice !== newSlice) {
         hasChanged = true;
@@ -108,7 +114,8 @@ function combineReducers(reducerPOJO) {
 
 const dogState = {
   dogs: ['Chi Chi', 'Paw Paw'],
-  selectedDog: 'Chi Chi'
+  selectedDog: 'Chi Chi',
+  owner: 'You'
 };
 
 const dogReducer = (state=dogState, action) => {
@@ -126,6 +133,11 @@ const dogReducer = (state=dogState, action) => {
         }
       } else {
         return state;
+      }
+    case 'ADD_OWNER':
+      return {
+        ...state,
+        owner: action.owner
       }
     default:
       return state;
@@ -149,3 +161,8 @@ const rootReducer = combineReducers({
 });
 
 const multiStore = createStore(rootReducer);
+
+const addOwner = owner => ({
+  type: 'ADD_OWNER',
+  owner
+})
