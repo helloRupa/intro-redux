@@ -108,7 +108,7 @@ store.dispatch(addDog('Woofin\' McWoofenStooffer'));
 
 1. Uncomment the `dogReducer` and its associated actions. We'll need this for testing later.
 2. Declare `combineReducers()` outside of `createStore()`. It should take one argument: `reducersPOJO`.
-3. Our function should return a function, since that's what `createStore()` needs. The returned function should take the same arguments as a regular reducer. This important because `dispatch()` is going to carry on running just like it always did.
+3. Our function should return a function, since that's what `createStore()` needs. The returned function should take the same arguments as a regular reducer. This is important because `dispatch()` is going to carry on running just like it always did.
 4. We need to track whether our state has changed when we run the reducers inside of the `reducersPOJO`. Declar a variable called `hasChanged` and set it to `false`.
 5. We also need to store each slice of state in a new object. Declare `combinedState` as an empty object.
 6. Call each reducer with its associated slice of state and the action. If the state returned by the reducer is not equal to the original slice, set `hasChanged` to `true`. Otherwise leave it alone. Store the slice of state at the relevant key in the `combinedState` object.
