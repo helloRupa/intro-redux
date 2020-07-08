@@ -1,6 +1,7 @@
 function createStore(reducer) {
   let state;
   let subscribedListener;
+  let betterListeners = [];
   // Set the initial state by dispatching a nonsense action
   // This causes the initialState to be used as the value of the
   // default parameter in the reducer (some naughty hoisting going on in here!)
@@ -16,6 +17,8 @@ function createStore(reducer) {
     if (typeof subscribedListener === 'function') {
       subscribedListener();
     }
+
+    betterListeners.forEach(listener => listener());
   }
   // provide a callback to run any time an action is dispatched
   // provide a way to stop running that callback when the dev decides
@@ -27,10 +30,21 @@ function createStore(reducer) {
     }
   }
 
+  // subscribe() actually lets you add and remove multiple listeners
+  // let's build that in betterSubscribe()
+  function betterSubscribe(listener) {
+    betterListeners.push(listener);
+
+    return function() {
+      betterListeners = betterListeners.filter(l => l !== listener);
+    }
+  }
+
   return {
     getState,
     dispatch,
-    subscribe
+    subscribe,
+    betterSubscribe
   }
 }
 
