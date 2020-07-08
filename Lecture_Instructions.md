@@ -62,3 +62,18 @@ Uncomment all of the dog business in custom.js. OR, if there's enough time, writ
 Next, combine the dogs and cats using combineReducers(reducersPOJO). combineReducers() takes an object where each reducer is associated with a specific key. Each key is associated with its own slice of state, e.g. cat with initialCatState and dog with initialDogState.
 
 Create a store using the combined reducers and check that works. If it does, you'll see the cat and dog states in a single store and be able to update them accordingly.
+
+## BONUS 3: Subscribe multiple listeners
+Redux actually allows us to subscribe multiple listeners which run any time the state might have changed. Each listener can be unsubscribed one by one. 
+
+If it's working the following should happen:
+```
+store.dispatch(addCat('Blunder Year'));
+const unsubscribe1 = store.subscribe(() => { console.log('Thanks for subscribing!'); });
+const unsubscribe2 = store.subscribe(() => { console.log('Thanks for subscribing again!'); });
+const unsubscribe3 = store.subscribe(() => { console.log('Thanks for subscribing once more yay!'); });
+store.dispatch(addCat('Moooo')); // logs all of the messages above
+store.dispatch(selectCat('Charlie')); // logs all of the messages
+unsubscribe2();
+store.dispatch(selectCat('Meowser')); // logs the first and third messages only
+```
