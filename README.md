@@ -1,12 +1,12 @@
 # Intro to Redux
-One store to rule them all!! Just ask Smeagol. He'll tell you.
+One store to rule them all!!
 
 If you want to do more reading, here's a slideshow I made and didn't use: https://docs.google.com/presentation/d/1S0D2Gdsc75YuEZkXZ_tbg3_aYRZvspNb7DUf6fmqIoc/edit?usp=sharing
 
 Complete code solution, including bonuses and comments: https://github.com/helloRupa/intro-redux/blob/solution/mini-redux.js
 
 ## By the end of this lesson, you should be able to:
-Explain the Redux cycle using the correct terms. Make a mental jigsaw!!
+Explain the Redux data flow using the correct terms. Make a mental jigsaw!!
 
 ## But Why?
 - Redux can make it easier for us to manage state in our applications
